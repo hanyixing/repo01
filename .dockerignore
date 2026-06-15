@@ -1,0 +1,11 @@
+.git
+.gitignore
+.env
+*.md
+*.vpp
+.idea
+.vscode
+logs
+*.log
+target
+!.mvn

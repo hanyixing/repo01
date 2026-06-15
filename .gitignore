@@ -28,3 +28,8 @@ logs/
 
 ### VS Code ###
 .vscode/
+
+### Environment / secrets ###
+.env
+*.local.yml
+!.env.example

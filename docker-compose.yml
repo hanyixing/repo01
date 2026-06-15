@@ -1,0 +1,56 @@
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: community-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-community}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+    container_name: community-app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "${SERVER_PORT:-8887}:8887"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SERVER_PORT: 8887
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-community}
+      MYSQL_USERNAME: ${MYSQL_USERNAME:-root}
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      GITHUB_REDIRECT_URI: ${GITHUB_REDIRECT_URI:-}
+      GITEE_CLIENT_ID: ${GITEE_CLIENT_ID:-}
+      GITEE_CLIENT_SECRET: ${GITEE_CLIENT_SECRET:-}
+      GITEE_REDIRECT_URI: ${GITEE_REDIRECT_URI:-}
+      UCLOUD_BUCKET_NAME: ${UCLOUD_BUCKET_NAME:-}
+      UCLOUD_BUCKET_TYPE: ${UCLOUD_BUCKET_TYPE:-private}
+      UCLOUD_EXPIRES_DURATION: ${UCLOUD_EXPIRES_DURATION:-315360000}
+      UCLOUD_PUBLIC_KEY: ${UCLOUD_PUBLIC_KEY:-}
+      UCLOUD_PRIVATE_KEY: ${UCLOUD_PRIVATE_KEY:-}
+      UCLOUD_UPLOAD_DOMAIN: ${UCLOUD_UPLOAD_DOMAIN:-}
+      UCLOUD_DOWNLOAD_DOMAIN: ${UCLOUD_DOWNLOAD_DOMAIN:-}
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+volumes:
+  mysql-data:

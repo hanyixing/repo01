@@ -1,0 +1,37 @@
+# Test/CI profile.
+# In-memory H2 so the @SpringBootTest context loads with no external dependencies.
+# Flyway is disabled (migrations are MySQL-only); the context-loads test does not
+# query the database, so no schema is required. OAuth/UCloud values are dummy
+# placeholders so the @Value-injected beans initialise without real secrets.
+spring:
+  datasource:
+    url: "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  flyway:
+    enabled: false
+
+github:
+  client:
+    id: test-github-client-id
+    secret: test-github-client-secret
+  redirect:
+    uri: http://localhost:8887/callback/github
+
+gitee:
+  client:
+    id: test-gitee-client-id
+    secret: test-gitee-client-secret
+  redirect:
+    uri: http://localhost:8887/callback/gitee
+
+ucloud:
+  ufile:
+    bucket-name: test-bucket
+    bucket-type: private
+    expires-duration: 315360000
+    public-key: test-public-key
+    private-key: test-private-key
+    upload-domain: test.example.com
+    download-domain: test.example.com

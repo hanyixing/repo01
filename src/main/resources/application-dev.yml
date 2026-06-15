@@ -1,0 +1,39 @@
+# Development profile (local).
+# Uses a file-based H2 database. Flyway runtime migration is disabled because the
+# Flyway migrations (db/migration) use MySQL-only syntax (e.g. ALTER ... MODIFY,
+# backtick identifiers) and only run on MySQL. Manage the dev H2 schema manually via
+# the flyway-maven-plugin if needed: `./mvnw flyway:migrate -P dev`.
+# Secrets are injected from environment variables; empty defaults let the app boot
+# without them (OAuth/upload features stay inactive until configured).
+spring:
+  datasource:
+    url: "${DB_URL:jdbc:h2:~/community}"
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:123}
+    driver-class-name: org.h2.Driver
+  flyway:
+    enabled: false
+
+github:
+  client:
+    id: ${GITHUB_CLIENT_ID:}
+    secret: ${GITHUB_CLIENT_SECRET:}
+  redirect:
+    uri: ${GITHUB_REDIRECT_URI:http://localhost:8887/callback/github}
+
+gitee:
+  client:
+    id: ${GITEE_CLIENT_ID:}
+    secret: ${GITEE_CLIENT_SECRET:}
+  redirect:
+    uri: ${GITEE_REDIRECT_URI:http://localhost:8887/callback/gitee}
+
+ucloud:
+  ufile:
+    bucket-name: ${UCLOUD_BUCKET_NAME:}
+    bucket-type: ${UCLOUD_BUCKET_TYPE:private}
+    expires-duration: ${UCLOUD_EXPIRES_DURATION:315360000}
+    public-key: ${UCLOUD_PUBLIC_KEY:}
+    private-key: ${UCLOUD_PRIVATE_KEY:}
+    upload-domain: ${UCLOUD_UPLOAD_DOMAIN:}
+    download-domain: ${UCLOUD_DOWNLOAD_DOMAIN:}
